@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 #! /usr/bin/python
 from mininet.topo import Topo
 from mininet.net import Mininet
@@ -15,14 +13,29 @@ class SingleSwitchTopo(Topo):
         switch = self.addSwitch("s1")
         # Python's range(N) generates 0..N-1
         for h in xrange(n):
+            #linkparams={"bw":10,"delay":'5ms',"loss":10,"max_queue_size":1000,"use_htb":True}
+            linkparams={}
+            """
+            maximum queue size of 1000 packets using the Hierarchical Token Bucket rate limiter
+            and netem delay/loss emulator. The parameter bw is expressed as a number in Mbit;
+            delay is expressed as a string with units in place (e.g. '5ms', '100us', '1s');
+            loss is expressed as a percentage (between 0 and 100); and max_queue_size is expressed in packets.
+            """
+
             host = self.addHost("h%s"%h)
-            self.addLink(host, switch)
+            self.addLink(host, switch,**linkparams)
 
 "Create and test a simple network"
 topo = SingleSwitchTopo()
 
 net = Mininet(topo)
 net.start()
+
+dumphost= lambda h:  ("IP: "+h.IP(),"MAC: "+h.MAC()) if "MAC" in h.__dict__.keys() or "IP" in h.__dict__.keys() else None
+print dumphost(net["h1"])
+print net.keys()
+print dumphost(net['c0'])
+
 print "Dumping host connections"
 dumpNodeConnections(net.hosts)
 
@@ -30,5 +43,5 @@ print "Testing network connectivity"
 net.pingAll()
 
 #Start mininet and hold on the  CLI
-CLI(net)
+#CLI(net)
 net.stop()
