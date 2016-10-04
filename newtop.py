@@ -21,7 +21,7 @@ class SingleSwitchTopo(Topo):
 "Create and test a simple network"
 topo = SingleSwitchTopo()
 
-net = Mininet(topo, conr)
+net = Mininet(topo)
 net.start()
 print "Dumping host connections"
 dumpNodeConnections(net.hosts)
