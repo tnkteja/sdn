@@ -5,7 +5,7 @@ from mininet.util import dumpNodeConnections
 from mininet.log import setLogLevel
 from mininet.cli import CLI
 
-from pox import POX
+#from pox import POX
 
 class SingleSwitchTopo(Topo):
     "Single switch connected to n hosts."
@@ -22,6 +22,13 @@ class SingleSwitchTopo(Topo):
             loss is expressed as a percentage (between 0 and 100); and max_queue_size is expressed in packets.
             """
 
+            """
+            Mid-level API: The mid-level API adds the Mininet object which
+            serves as a container for nodes and links. It provides a number of
+            methods (such as addHost(), addSwitch(), and addLink()) for adding
+            nodes and links to a network, as well as network configuration,
+            startup and shutdown (notably start() and stop().)
+            """
             host = self.addHost("h%s"%h)
             self.addLink(host, switch,**linkparams)
 
