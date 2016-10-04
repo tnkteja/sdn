@@ -8,7 +8,14 @@ from mininet.cli import CLI
 #from pox import POX
 
 class SingleSwitchTopo(Topo):
+    """
+    High-level API: The high-level API adds a topology template abstraction,
+    the Topo class, which provides the ability to create reusable, parametrized
+    topology templates. These templates can be passed to the mn command
+    (via the --custom option) and used from the command line.
+    """
     "Single switch connected to n hosts."
+
     def build(self, n=2):
         switch = self.addSwitch("s1")
         # Python's range(N) generates 0..N-1
