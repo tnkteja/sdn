@@ -42,7 +42,42 @@ class SingleSwitchTopo(Topo):
 "Create and test a simple network"
 topo = SingleSwitchTopo()
 
-net = Mininet(topo)
+"""
+If you invoke the Mininet() constructor in your script without specifying a
+controller class, by default it will use the Controller() class to create an
+instance of the Stanford/OpenFlow reference controller, controller.
+Like ovs-controller, it turns your switches into simple learning switches, but
+if you have installed controller using Mininet's install.sh -f script, the
+patched version of controller should support a large number of switches
+(up to 4096 in theory, but you'll probably max out your computing resources
+much earlier.) You can also select the reference controller for mn by specifying
+--controller ref.
+"""
+net = Mininet(topo=SingleSwitchTopo())
+"""
+If you want to use your own controller, you can easily create a custom subclass
+of Controller() and pass it into Mininet. An example can be seen in
+mininet.controller.NOX(), which invokes NOX classic with a set of modules passed
+in as options.
+"""
+class POXBridge( Controller ):
+    "Custom Controller class to invoke POX forwarding.l2_learning"
+    def start( self ):
+        "Start POX learning switch"
+        self.pox = '%s/pox/pox.py' % os.environ[ 'HOME' ]
+        self.cmd( self.pox, 'forwarding.l2_learning &' )
+    def stop( self ):
+        "Stop POX"
+        self.cmd( 'kill %' + self.pox )
+
+net = Mininet( topo=SingleSwitchTopo(), controller=POXBridge )
+"""
+The RemoteController class acts as a proxy for a controller which may be running
+anywhere on the control network, but which must be started up and shut down
+manually or by some other mechanism outside of Mininet's direct control.
+"""
+#net = Mininet( topo=topo, controller=lambda name: RemoteController( name, ip='127.0.0.1' ) )
+net.addController( 'c0', controller=RemoteController, ip='127.0.0.1', port=6633 )
 net.start()
 
 dumphost= lambda h:  ("IP: "+h.IP(),"MAC: "+h.MAC()) if "MAC" in h.__dict__.keys() or "IP" in h.__dict__.keys() else None
